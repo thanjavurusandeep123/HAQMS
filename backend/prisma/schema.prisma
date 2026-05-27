@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(RECEPTIONIST)
+  createdAt DateTime @default(now())
+  doctor    Doctor?
+}
+
+model Doctor {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  name            String
+  specialization  String
+  department      String
+  experience      Int
+  consultationFee Float
+  appointments    Appointment[]
+  queueTokens     QueueToken[]
+  createdAt       DateTime      @default(now())
+}
+
+model Patient {
+  id             String        @id @default(cuid())
+  name           String
+  email          String?
+  phoneNumber    String
+  age            Int
+  gender         String
+  medicalHistory String?
+  appointments   Appointment[]
+  queueTokens    QueueToken[]
+  createdAt      DateTime      @default(now())
+}
+
+model Appointment {
+  id              String      @id @default(cuid())
+  patientId       String
+  doctorId        String
+  patient         Patient     @relation(fields: [patientId], references: [id])
+  doctor          Doctor      @relation(fields: [doctorId], references: [id])
+  appointmentDate DateTime
+  reason          String?
+  status          AppStatus   @default(PENDING)
+  queueToken      QueueToken?
+  createdAt       DateTime    @default(now())
+}
+
+model QueueToken {
+  id            String      @id @default(cuid())
+  tokenNumber   Int
+  patientId     String
+  doctorId      String
+  appointmentId String?     @unique
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  doctor        Doctor      @relation(fields: [doctorId], references: [id])
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  status        QueueStatus @default(WAITING)
+  createdAt     DateTime    @default(now())
+}
+
+enum Role {
+  ADMIN
+  RECEPTIONIST
+  DOCTOR
+}
+
+enum AppStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum QueueStatus {
+  WAITING
+  CALLING
+  COMPLETED
+  SKIPPED
+}

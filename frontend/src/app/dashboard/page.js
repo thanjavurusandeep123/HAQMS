@@ -1,14 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/common/Navbar';
-import { useRouter } from 'next/navigation';
-import { 
-  Users, CalendarDays, Activity, Search, Sparkles, UserPlus, 
-  Trash2, ClipboardList, TrendingUp, DollarSign, Award, Clock,
-  ArrowRight, ShieldAlert, CheckCircle, Volume2
+import { useAuth } from '@/context/AuthContext';
+import {
+  Activity,
+  ArrowRight,
+  Award,
+  CalendarDays,
+  ClipboardList,
+  Clock,
+  Search,
+  ShieldAlert,
+  Trash2,
+  TrendingUp,
+  UserPlus
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
   const { user, token, API_BASE_URL, logout } = useAuth();
@@ -894,7 +902,7 @@ export default function Dashboard() {
                       without optional chaining! If medicalHistory is null (which is the case for Batman, Clark Kent, etc.),
                       this code throws: "Cannot read properties of null (reading 'toUpperCase')" and crashes the app! */}
                   <p className="text-slate-700 dark:text-slate-300 leading-5 text-sm font-semibold">
-                    {selectedPatientHistory.medicalHistory.toUpperCase()}
+                    {selectedPatientHistory.medicalHistory?.toUpperCase() ?? 'No medical history recorded.'}
                   </p>
                 </div>
 

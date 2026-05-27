@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Navbar from '@/components/common/Navbar';
-import { Activity, Bell, Monitor, RefreshCw, AlertCircle } from 'lucide-react';
+import { AlertCircle, Bell, Monitor, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function QueueMonitor() {
   const [tokens, setTokens] = useState([]);
@@ -44,15 +44,14 @@ export default function QueueMonitor() {
     // If the candidate navigates between Dashboard and Queue multiple times,
     // dozens of parallel intervals will poll the database, causing memory bloat,
     // state update crashes on unmounted components, and heavy server load.
+    // REPLACE WITH:
     const intervalId = setInterval(() => {
-      console.log(`[POLL] Active Queue Poll #${refreshCount + 1} firing...`);
       fetchQueueData();
       setRefreshCount((prev) => prev + 1);
     }, 3000);
 
-    // Junior Developer Note: "Interval created, will run forever to keep dashboard fully synced!"
-    // Missing: return () => clearInterval(intervalId);
-  }, []); // Note that refreshCount dependency is missing too, causing stale closure on log!
+    return () => clearInterval(intervalId);
+  }, []);// Note that refreshCount dependency is missing too, causing stale closure on log!
 
   // Group tokens by doctor
   const groupedTokens = tokens.reduce((groups, token) => {
