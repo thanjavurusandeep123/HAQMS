@@ -7,9 +7,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export async function generateStaticParams() {
-  return [];
-}
+
 
 export default function PatientHistoryRecords() {
   const { id } = useParams();
